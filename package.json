@@ -1,0 +1,28 @@
+{
+  "name": "piquote-box",
+  "version": "0.0.0",
+  "description": "ERROR: No README.md file found!",
+  "main": "index.js",
+  "dependencies": {
+    "lame": "~1.0.2",
+    "speaker": "0.0.10"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:lbdremy/piquote-box.git"
+  },
+  "keywords": [
+    "raspberry",
+    "pi",
+    "quote",
+    "tv",
+    "series",
+    "box"
+  ],
+  "author": "Rémy Loubradou",
+  "license": "MIT"
+}
