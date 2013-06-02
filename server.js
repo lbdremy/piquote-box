@@ -5,9 +5,8 @@
 var domain = require('domain')
 var http = require('http');
 var express = require('express');
-var fs = require('fs');
-var lame = require('lame');
-var Speaker = require('speaker');
+var jukebox = require('./jukebox');
+var hasNestedProperty = require('hnp');
 
 /**
  * Create app
@@ -15,17 +14,37 @@ var Speaker = require('speaker');
 
 var app = express();
 
+// Jukebox for the webhook
+var webhookJukebox = jukebox.create({
+	directory : process['DIR_SELECTIONS'] || './repos/'
+});
+webhookJukebox.on('error',exit);
+
 app.post('/webhook',function(req,res,next){
 	var webhookDomain = domain.create();
-	webhookDomain.on('error',console.error);
+	webhookDomain.on('error',exit);
 	webhookDomain.run(function(){
-		fs.createReadStream(__dirname + '/ftnidafot.mp3')
-	  	.pipe(new lame.Decoder())
-	  	.on('format', function (format) {
-	    	this.pipe(new Speaker(format));
-	  	});
+		var body = '';
+		req.on('readable',function(){
+			body += req.read();
+		});
+		req.on('end',function(){
+			try{
+				var push = JSON.parse(body);
+			}catch(err){
+				console.error(err.stack);
+				return res.send(400);
+			}
+			if(!hasNestedProperty(push,'commits[0].author.name')){
+				var err = new Error('The body of the request has an unexpected format: ' + JSON.stringify(push));
+				console.error(err.stack);
+				return res.send(400);
+			}
+			webhookJukebox.playFor(push.commits[0].author.name);
+			res.send(200);
+		});
+		req.read(0); // kick off
 	});
-	res.send(200);
 });
 
 /**
@@ -37,3 +56,12 @@ var server = http.createServer(app);
 server.listen(port,function(){
 	console.log('HTTP server listening on port ' + port );
 });
+
+/**
+ * Exit
+ */
+
+function exit(err){
+	console.error(err.stack);
+	process.exit(1);
+}

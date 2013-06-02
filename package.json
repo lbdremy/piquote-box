@@ -7,7 +7,10 @@
     "lame": "~1.0.2",
     "speaker": "0.0.10",
     "express": "~3.2.4",
-    "duplexer": "~0.1.1"
+    "duplexer": "~0.1.1",
+    "watch": "~0.7.0",
+    "readdirp": "~0.2.4",
+    "hnp": "0.0.1"
   },
   "devDependencies": {},
   "scripts": {
